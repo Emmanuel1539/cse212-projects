@@ -11,6 +11,27 @@ public static class ArraySelector
 
     private static int[] ListSelector(int[] list1, int[] list2, int[] select)
     {
-        return [];
+        List<int> result = new();
+        int firstListValue = 0, secondListValue = 0;
+
+
+        foreach (int sel in select)
+        {
+            if (sel == 1)
+            {
+                result.Add(list1[firstListValue]);
+                firstListValue++;
+            }
+            else if (sel == 2)
+            {
+                result.Add(list2[secondListValue]);
+                secondListValue++;
+            }
+            else
+            {
+                throw new ArgumentException("Selector must contain only 1 or 2.");
+            }
+        }
+        return result.ToArray();
     }
 }
