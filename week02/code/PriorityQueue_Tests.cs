@@ -20,9 +20,9 @@ public class PriorityQueueTests
     }
 
     [TestMethod]
-    // Scenario: 
-    // Expected Result: 
-    // Defect(s) Found: 
+    // Scenario: Add items with same priority, ensure the one added last (with equal priority) is dequeued
+    // Expected Result: If priorities are equal, latest item should be returned (due to >= comparison)
+    // Defect(s) Found: None (after fix) 
     public void TestPriorityQueue_2()
     {
         var priorityQueue = new PriorityQueue();
