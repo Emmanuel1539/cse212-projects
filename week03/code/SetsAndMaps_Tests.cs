@@ -343,4 +343,14 @@ public class EarthquakeDailySummaryTests
             Assert.IsTrue(s.Contains(" - Mag "), "String must contain a magnitude");
         }
     }
+    [TestMethod]
+public void FindPairs_TestExample()
+{
+    var input = new[] { "am", "ma", "if", "fi", "at" };
+    var expected = new[] { "am & ma", "if & fi" };
+    var actual = SetsAndMaps.FindPairs(input);
+
+    CollectionAssert.AreEquivalent(expected, actual);
 }
+}
+

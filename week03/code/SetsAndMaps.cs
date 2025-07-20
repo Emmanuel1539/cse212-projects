@@ -19,10 +19,41 @@ public static class SetsAndMaps
     /// that there were no duplicates) and therefore should not be returned.
     /// </summary>
     /// <param name="words">An array of 2-character words (lowercase, no duplicates)</param>
-    public static string[] FindPairs(string[] words)
+    
+        public static string[] FindPairs(string[] words)
     {
         // TODO Problem 1 - ADD YOUR CODE HERE
-        return [];
+        var wordSet = new HashSet<string>(words);
+        // Create a HashSet to store the pairs
+        // Iterate through each word in the input array
+        // Use a HashSet to store the words for O(1) lookup
+        // For each word, reverse it and check if the reversed word exists in the set
+        // If it exists and is not the same as the original word, add the pair to the result set
+        // Return the result set as an array
+        var result = new List<string>();
+        var seen = new HashSet<string>();
+        // Iterate through each word in the input array
+
+        foreach (var word in words)
+        {
+            // Create the reverse of the current word
+            var reversedWord = $"{word[1]}{word[0]}";
+            // Check if the reversed word exists in the set
+            if (word == reversedWord)
+            {
+                // Skip if the word is the same when reversed (e.g., 'aa')
+                continue;
+            }
+            if (wordSet.Contains(reversedWord) && !seen.Contains(word) && !seen.Contains(reversedWord))
+            {
+                // Add the pair to the result set 
+                result.Add($"{word} & {reversedWord}");
+                // Add both words to the seen set to avoid duplicates
+                seen.Add(word);
+                seen.Add(reversedWord);
+            }
+        }
+        return result.ToArray();
     }
 
     /// <summary>
@@ -43,6 +74,19 @@ public static class SetsAndMaps
         {
             var fields = line.Split(",");
             // TODO Problem 2 - ADD YOUR CODE HERE
+            var field = line.Split(',');
+            if (fields.Length > 3)
+            {
+                var degree = fields[3].Trim();
+                if (degrees.ContainsKey(degree))
+                {
+                    degrees[degree]++;
+                }
+                else
+                {
+                    degrees[degree] = 1;
+                }
+            }
         }
 
         return degrees;
@@ -67,7 +111,37 @@ public static class SetsAndMaps
     public static bool IsAnagram(string word1, string word2)
     {
         // TODO Problem 3 - ADD YOUR CODE HERE
-        return false;
+        string Clean(string s) => new string(s.Where(char.IsLetter).Select(char.ToLower).ToArray());
+        word1 = Clean(word1);
+        word2 = Clean(word2);
+        if (word1.Length != word2.Length)
+        {
+            return false;
+        }
+        var charCount = new Dictionary<char, int>();
+        foreach (var c in word1)
+        {
+            if (charCount.ContainsKey(c))
+            {
+                charCount[c]++;
+            }
+            else
+            {
+                charCount[c] = 1;
+            }
+        }
+        foreach (var c in word2)
+        {
+            if (charCount.ContainsKey(c))
+            {
+                charCount[c]--;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        return charCount.Values.All(count => count == 0);
     }
 
     /// <summary>
@@ -84,6 +158,22 @@ public static class SetsAndMaps
     /// https://earthquake.usgs.gov/earthquakes/feed/v1.0/geojson.php
     /// 
     /// </summary>
+    public class FeatureCollection
+    {
+        public List<Feature> Features { get; set; }
+    }
+
+    public class Feature
+    {
+        public Properties Properties { get; set; }
+    }
+
+    public class Properties
+    {
+        public double? Mag { get; set; }
+        public string Place { get; set; }
+    }
+
     public static string[] EarthquakeDailySummary()
     {
         const string uri = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson";
@@ -95,6 +185,20 @@ public static class SetsAndMaps
         var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 
         var featureCollection = JsonSerializer.Deserialize<FeatureCollection>(json, options);
+        var result = new List<string>();
+        if (featureCollection?.Features != null)
+        {
+            foreach (var feature in featureCollection.Features)
+            {
+                var mag = feature.Properties?.Mag;
+                var place = feature.Properties?.Place;
+
+                if (place != null && mag != null)
+                {
+                    result.Add($"{place}: Magnitude {mag}");
+                }
+            }
+        }
 
         // TODO Problem 5:
         // 1. Add code in FeatureCollection.cs to describe the JSON using classes and properties 
@@ -103,4 +207,7 @@ public static class SetsAndMaps
         // 3. Return an array of these string descriptions.
         return [];
     }
+
+
+
 }
